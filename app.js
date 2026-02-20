@@ -44,4 +44,4 @@ app.use("/blog", blogRoute);
 
 
 
-app.listen(PORT, () => console.log(`Server Started at PORT : ${PORT}`));
+app.listen(PORT, () => console.log(`Server Started at PORT : http://localhost:${PORT}`));
