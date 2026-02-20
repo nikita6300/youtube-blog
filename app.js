@@ -22,7 +22,9 @@ app.use(express.static(path.resolve('./public')));
 
 const PORT = process.env.PORT || 8000;
 
-mongoose.connect(process.env.MONGO_URL).then(e=> console.log('MongoDB CONNECTED'))
+mongoose.connect(process.env.MONGO_URL)
+  .then(() => console.log('MongoDB CONNECTED'))
+  .catch(err => console.log('MongoDB Connection Error:', err));
 
 app.set('view engine' ,'ejs')
 app.set('views', path.resolve("./views"));
