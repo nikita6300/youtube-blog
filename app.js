@@ -42,6 +42,10 @@ app.get('/', async (req,res) => {
     });
 });
 
+const methodOverride = require("method-override");
+
+app.use(methodOverride("_method"));
+
 app.use("/user", userRoute);
 app.use("/blog", blogRoute);
 

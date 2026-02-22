@@ -64,6 +64,14 @@ router.post("/comment/:blogId", async (req, res) => {
 
 router.post("/", upload.single("coverImage"), async (req, res) => {
   const { title, body } = req.body;
+
+   if (!title || !body || !req.file) {
+    return res.status(400).render("addBlog", {
+      user: req.user,
+      error: "All fields (title, body, cover image) are required.",
+    });
+  }
+
   const blog = await Blog.create({
     body,
     title,
@@ -71,6 +79,26 @@ router.post("/", upload.single("coverImage"), async (req, res) => {
     coverImageURL: `/uploads/${req.file.filename}`,
   });
   return res.redirect(`/blog/${blog._id}`);
+});
+
+router.delete("/:id", async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/user/signin");
+  }
+
+  const blog = await Blog.findById(req.params.id);
+
+  // Optional: Only allow owner to delete
+  if (!blog.createdBy.equals(req.user._id)) {
+    return res.status(403).send("Not Allowed");
+  }
+
+  await Blog.findByIdAndDelete(req.params.id);
+
+  // Also delete related comments
+  await Comment.deleteMany({ blogId: req.params.id });
+
+  return res.redirect("/");
 });
 
 module.exports = router;
