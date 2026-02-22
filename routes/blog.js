@@ -25,6 +25,21 @@ router.get("/add-new", (req, res) => {
   });
 });
 
+// This route returns all blogs created by the currently authenticated user.
+// If the user is not logged in we send them to the signin page.
+router.get("/myblogs", async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/user/signin");
+  }
+
+  const userBlogs = await Blog.find({ createdBy: req.user._id });
+  return res.render("home", {
+    user: req.user,
+    blogs: userBlogs,
+    pageTitle: 'My Blogs',
+  });
+});
+
 router.get("/:id", async (req, res) => {
   const blog = await Blog.findById(req.params.id).populate("createdBy");
   const comments = await Comment.find({ blogId: req.params.id }).populate(
